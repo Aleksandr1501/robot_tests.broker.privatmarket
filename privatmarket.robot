@@ -1330,7 +1330,8 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id] | //
     Sleep  2s
     Wait Visibility And Click Element  xpath=//*[@data-id='ptrFeatures']//button[contains(., 'Додати показник')]
     Wait Element Visibility And Input Text  xpath=(//*[@data-id='ptrFeatures']//input[@data-id='title'])[last()]  ${feature.title}
-    Run Keyword If  ${type} != 'aboveThresholdUA'  Wait Element Visibility And Input Text  xpath=(//*[@data-id='ptrFeatures']//input[@data-id='titleEn'])[last()]  ${feature.title_en}
+#    Run Keyword If  ${type} != 'aboveThresholdUA'  Wait Element Visibility And Input Text  xpath=(//*[@data-id='ptrFeatures']//input[@data-id='titleEn'])[last()]  ${feature.title_en}
+    Run Keyword And Ignore Error  Wait Element Visibility And Input Text  xpath=(//*[@data-id='ptrFeatures']//input[@data-id='titleEn'])[last()]  ${feature.title_en}
     Wait Element Visibility And Input Text  xpath=(//*[@data-id='ptrFeatures']//textarea[@data-id='description'])[last()]  ${feature.description}
  #   Run Keyword If  ${type} != 'aboveThresholdUA'
     Run Keyword And Ignore Error  Wait Element Visibility And Input Text  xpath=(//*[@data-id='ptrFeatures']//textarea[@data-id='descriptionEn'])[last()]  ${feature.description}
@@ -1346,8 +1347,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id] | //
     \  Wait Element Visibility And Input Text  xpath=(//*[@data-id='ptrFeatures']//input[@data-id='criterionValue'])[last()]  ${tender_criterion_value}
     \  Wait Element Visibility And Input Text  xpath=(//*[@data-id='ptrFeatures']//input[@data-id='criterionTitle'])[last()]  ${tender_enums[${index}].title}
    # \  Run Keyword If  ${type} != 'aboveThresholdUA'
-    \  Run Keyword And Ignore Error
-    \ Wait Element Visibility And Input Text  xpath=(//*[@data-id='ptrFeatures']//input[@data-id='criterionTitleEn'])[last()]  ${tender_enums[${index}].title}
+    \  Run Keyword And Ignore Error  Wait Element Visibility And Input Text  xpath=(//*[@data-id='ptrFeatures']//input[@data-id='criterionTitleEn'])[last()]  ${tender_enums[${index}].title}
 
     Wait Visibility And Click Element  ${locator_tenderAdd.btnSave}
     Wait For Ajax
@@ -1372,9 +1372,11 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id] | //
     Sleep  2s
     Wait Visibility And Click Element  xpath=//div[@data-id='lot']//button[contains(., 'Додати показник')]
     Wait Element Visibility And Input Text  xpath=(//div[@data-id='lot']//input[@data-id='title'])[last()]  ${feature.title}
-    Run Keyword If  ${type} != 'aboveThresholdUA'  Wait Element Visibility And Input Text  xpath=(//div[@data-id='lot']//input[@data-id='titleEn'])[last()]  ${feature.title_en}
+#    Run Keyword If  ${type} != 'aboveThresholdUA'  Wait Element Visibility And Input Text  xpath=(//div[@data-id='lot']//input[@data-id='titleEn'])[last()]  ${feature.title_en}
+    Run Keyword And Ignore Error  Wait Element Visibility And Input Text  xpath=(//div[@data-id='lot']//input[@data-id='titleEn'])[last()]  ${feature.title_en}
     Wait Element Visibility And Input Text  xpath=(//div[@data-id='lot']//textarea[@data-id='description'])[last()]  ${feature.description}
-    Run Keyword If  ${type} != 'aboveThresholdUA'  Wait Element Visibility And Input Text  xpath=(//div[@data-id='lot']//textarea[@data-id='descriptionEn'])[last()]  ${feature.description}
+#    Run Keyword If  ${type} != 'aboveThresholdUA'  Wait Element Visibility And Input Text  xpath=(//div[@data-id='lot']//textarea[@data-id='descriptionEn'])[last()]  ${feature.description}
+    Run Keyword And Ignore Error  Wait Element Visibility And Input Text  xpath=(//div[@data-id='lot']//textarea[@data-id='descriptionEn'])[last()]  ${feature.description}
 
     @{lot_enums}=  Get From Dictionary  ${feature}  enum
     ${lot_criterion_count}=  Get Length  ${lot_enums}
@@ -1387,8 +1389,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id] | //
     \  Wait Element Visibility And Input Text  xpath=(//div[@data-id='lot']//input[@data-id='criterionValue'])[last()]  ${lot_criterion_value}
     \  Wait Element Visibility And Input Text  xpath=(//div[@data-id='lot']//input[@data-id='criterionTitle'])[last()]  ${lot_enums[${index}].title}
    # \  Run Keyword If  ${type} != 'aboveThresholdUA'
-    \  Run Keyword And Ignore Error
-    \  Wait Element Visibility And Input Text  xpath=(//div[@data-id='lot']//input[@data-id='criterionTitleEn'])[last()]  ${lot_enums[${index}].title}
+    \  Run Keyword And Ignore Error  Wait Element Visibility And Input Text  xpath=(//div[@data-id='lot']//input[@data-id='criterionTitleEn'])[last()]  ${lot_enums[${index}].title}
 
     Wait Visibility And Click Element  ${locator_tenderAdd.btnSave}
     Wait For Ajax
@@ -1413,7 +1414,8 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id] | //
     Sleep  3
     Wait Visibility And Click Element  xpath=//div[@data-id='item']//button[contains(., 'Додати показник')]
     Wait Element Visibility And Input Text  xpath=(//div[@data-id='item']//input[@data-id='title'])[last()]  ${feature.title}
-    Run Keyword If  ${type} != 'aboveThresholdUA'  Wait Element Visibility And Input Text  xpath=(//div[@data-id='item']//input[@data-id='titleEn'])[last()]  ${feature.title}
+#    Run Keyword If  ${type} != 'aboveThresholdUA'  Wait Element Visibility And Input Text  xpath=(//div[@data-id='item']//input[@data-id='titleEn'])[last()]  ${feature.title}
+    Run Keyword And Ignore Error  Wait Element Visibility And Input Text  xpath=(//div[@data-id='item']//input[@data-id='titleEn'])[last()]  ${feature.title}
     Wait Element Visibility And Input Text  xpath=(//div[@data-id='item']//textarea[@data-id='description'])[last()]  ${feature.description}
   #  Run Keyword If  ${type} != 'aboveThresholdUA'
     Run Keyword And Ignore Error  Wait Element Visibility And Input Text  xpath=(//div[@data-id='item']//textarea[@data-id='descriptionEn'])[last()]  ${feature.description}
