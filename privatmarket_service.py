@@ -400,12 +400,12 @@ def get_milestones_duration_type(type):
 def get_rationaleType (type):
     type_dictionary = {
         u'Зменшення обсягів закупівлі': 'volumeCuts',
-        u'Зміна сторонніх показників (курсу, тарифів...)': 'thirdParty',
+        u'Зміна сторонніхпоказників (курсу, тарифів...)': 'thirdParty',
         u'Зміна ціни у зв’язку із зміною ставок податків і зборів': 'taxRate',
         u'Покращення якості предмета закупівлі': 'qualityImprovement',
         u'Узгоджене зменшення ціни': 'priceReduction',
         u'Зміна ціни за одиницю товару': 'itemPriceVariation',
-        u'Продовження строку дії договору на наступний рік': 'fiscalYearExtension',
+        u'Продовження строку дії договоруна наступний рік': 'fiscalYearExtension',
         u'Продовження строку дії договору (черездокументально підтверджені об’єктивні обставини)': 'durationExtension',
 
     }
