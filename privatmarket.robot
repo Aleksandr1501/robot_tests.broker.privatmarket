@@ -219,7 +219,7 @@ ${contract_data_amountPaid.amount}  xpath=//div[contains(@ng-repeat,'currentCont
 ${contract_data_period.startDate}  xpath=//dt[text()='Дата початку:']/following-sibling::dd/span
 ${contract_data_period.endDate}  xpath=//dt[text()='Дата кiнця:']/following-sibling::dd/span
 
-${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
+${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id] | //*[text()='Ідентифікатор рамкової угоди:']/following-sibling::dd
 
 
 *** Keywords ***
@@ -279,6 +279,14 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     privatmarket.Пошук тендера по ідентифікатору  ${username}  ${tenderId}
     Відкрити детальну інформацію про контракт
     Page Should Contain  ${contract_uaid}
+
+
+Пошук угоди по ідентифікатору
+    [Arguments]  ${username}  ${agreement_uaid}
+    ${agreementId}=  Remove String Using Regexp  ${agreement_uaid}  -\\w+\\d$
+    privatmarket.Пошук тендера по ідентифікатору  ${username}  ${agreementId}
+    Відкрити детальну інформацію про рамкові угоди
+    Page Should Contain  ${agreement_uaid}
 
 
 Пошук плану по ідентифікатору
@@ -1063,6 +1071,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     Додати lots  ${lots}  ${items}  ${type}
     Wait Visibility And Click Element  ${locator_tenderAdd.btnSave}
     Sleep  5s
+    Execute JavaScript    window.scrollTo(${0},${0})
     Wait Visibility And Click Element  xpath=//span[@title='Перевірка та публікація']
     Wait Visibility And Click Element  ${locator_tenderCreation.buttonSend}
 
@@ -1219,8 +1228,8 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     Execute JavaScript    window.scrollTo(${0},${0})
     Wait Visibility And Click Element  ${locator_tenderClaim.buttonCreate}
 
-    ${status}=  Run Keyword And Return Status  Page Should Contain  Закінчення періоду прийому пропозицій не повинно бути ближче  10s
-    Run Keyword If  '${status}' == 'False'  privatmarket.Пошук тендера по ідентифікатору  ${tender_owner}  ${tender_uaid}
+#    ${status}=  Run Keyword And Return Status  Page Should Contain  Закінчення періоду прийому пропозицій не повинно бути ближче  10s
+#    Run Keyword If  '${status}' == 'False'  privatmarket.Пошук тендера по ідентифікатору  ${tender_owner}  ${tender_uaid}
 
     Run Keyword And Return If  'Неможливість редагувати однопредметний тендер менше ніж за 2 дні' in '${TEST_NAME}'  Перевірити неможливість внесення змін в тендер
 
@@ -1262,7 +1271,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     Wait Element Visibility And Input Text  xpath=(//textarea[@data-id='lotDescription'])[1]  ${value}
     Wait Visibility And Click Element  ${locator_tenderAdd.btnSave}
     Wait For Ajax
-
+    Execute JavaScript    window.scrollTo(${0},${0})
     Wait Visibility And Click Element  xpath=//span[@title='Перевірка та публікація']
 
     Wait For Ajax
@@ -1278,6 +1287,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     Wait Visibility And Click Element  ${locator_tenderClaim.buttonCreate}
     Wait For Ajax
     Run Keyword And Ignore Error  Wait Visibility And Click Element  css=button[data-id='modal-close']
+    Execute JavaScript    window.scrollTo(${0},${0})
     Wait Visibility And Click Element  xpath=//span[@title='Лоти та предмети закупівлі']
     ${value_amount}=  privatmarket_service.convert_float_to_string  ${value}
     Wait Element Visibility And Input Text  css=input[data-id='valueAmount']  ${value_amount}
@@ -1290,6 +1300,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     Wait Element Visibility And Input Text  css=input[data-id='minimalStepAmount']  ${minimalStep_amount}
     Wait Visibility And Click Element  ${locator_tenderAdd.btnSave}
     Wait For Ajax
+    Execute JavaScript    window.scrollTo(${0},${0})
     Wait Visibility And Click Element  xpath=//div[contains(@id,'tab')][last()]
     Wait For Ajax
     Wait Visibility And Click Element  ${locator_tenderCreation.buttonSend}
@@ -1328,6 +1339,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
 
     Wait Visibility And Click Element  ${locator_tenderAdd.btnSave}
     Wait For Ajax
+    Execute JavaScript    window.scrollTo(${0},${0})
     Wait Visibility And Click Element  xpath=//span[@title='Перевірка та публікація']
     Wait For Ajax
     Wait Visibility And Click Element  ${locator_tenderCreation.buttonSend}
@@ -1366,6 +1378,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
 
     Wait Visibility And Click Element  ${locator_tenderAdd.btnSave}
     Wait For Ajax
+    Execute JavaScript    window.scrollTo(${0},${0})
     Wait Visibility And Click Element  xpath=//span[@title='Перевірка та публікація']
     Wait For Ajax
     Wait Visibility And Click Element  ${locator_tenderCreation.buttonSend}
@@ -1404,6 +1417,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
 
     Wait Visibility And Click Element  ${locator_tenderAdd.btnSave}
     Wait For Ajax
+    Execute JavaScript    window.scrollTo(${0},${0})
     Wait Visibility And Click Element  xpath=//span[@title='Перевірка та публікація']
     Wait For Ajax
     Wait Visibility And Click Element  ${locator_tenderCreation.buttonSend}
@@ -1427,6 +1441,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     ...  ELSE IF  'на предмет' in '${TEST_NAME}'  Wait Visibility And Click Element  xpath=(//*[@data-id='item']//button[@data-id='actRemove'])[last()]
     Wait Visibility And Click Element  ${locator_tenderAdd.btnSave}
     Wait For Ajax
+    Execute JavaScript    window.scrollTo(${0},${0})
     Wait Visibility And Click Element  xpath=//span[@title='Перевірка та публікація']
     Wait For Ajax
     Wait Visibility And Click Element  ${locator_tenderCreation.buttonSend}
@@ -1447,6 +1462,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     Wait Visibility And Click Element  xpath=//select[@data-id='funder']/option[@value='none']
     Wait Visibility And Click Element  ${locator_tenderAdd.btnSave}
     Wait For Ajax
+    Execute JavaScript    window.scrollTo(${0},${0})
     Wait Visibility And Click Element  xpath=//span[@title='Перевірка та публікація']
     Wait For Ajax
     Wait Visibility And Click Element  ${locator_tenderCreation.buttonSend}
@@ -1465,6 +1481,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     Wait Visibility And Click Element  xpath=//select[@data-id='funder']/option[@value='${funders_data.identifier.id}']
     Wait Visibility And Click Element  ${locator_tenderAdd.btnSave}
     Wait For Ajax
+    Execute JavaScript    window.scrollTo(${0},${0})
     Wait Visibility And Click Element  xpath=//span[@title='Перевірка та публікація']
     Wait For Ajax
     Wait Visibility And Click Element  ${locator_tenderCreation.buttonSend}
@@ -1498,6 +1515,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     Sleep  5s
     Wait Visibility And Click Element  ${locator_tenderAdd.btnSave}
     Wait For Ajax
+    Execute JavaScript    window.scrollTo(${0},${0})
     Wait Until Element Is Visible  xpath=//span[@title='Перевірка та публікація']  ${COMMONWAIT}
     Sleep  1s
     Wait Visibility And Click Element  ${locator_tenderCreation.buttonSend}
@@ -1534,6 +1552,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     Sleep  5s
     Wait Visibility And Click Element  ${locator_tenderAdd.btnSave}
     Wait For Ajax
+    Execute JavaScript    window.scrollTo(${0},${0})
     Wait Until Element Is Visible  xpath=//span[@title='Перевірка та публікація']  ${COMMONWAIT}
     Wait For Ajax
     Wait Visibility And Click Element  ${locator_tenderCreation.buttonSend}
@@ -1751,6 +1770,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
 
 Відкрити детальну інформацію по позиціям
     Відкрити детальну інформацію по лотам
+    Wait Until Element Is Visible  css=.lot-info .description a
     ${elements}=  Get Webelements  css=.lot-info .description a
     ${count}=  Get_Length  ${elements}
     :FOR  ${item}  In Range  0  ${count}
@@ -1856,7 +1876,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     Відкрити детальну інформацію про контракт
     Run Keyword If
     ...  'Неможливість' in '${TEST_NAME}'  Wait Until Element Is Visible  css=input[data-id='contract.title']  5s
-    ...  ELSE  Wait For Element With Reload  css=input[data-id='contract.title']  1
+    ...  ELSE  Wait For Element With Reload  xpath=//input[@data-id='contract.title'] | //div[contains(@class,'contracts')]  1
     Run Keyword If  '${MODE}' == 'reporting' or '${MODE}' == 'negotiation'
     ...  Run Keywords
     ...  Заповнити поля договору  ${tender_uaid}
@@ -1936,6 +1956,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     Run Keyword And Return If  'Неможливість' in '${TEST_NAME}' and '${field_name}' == 'value.amountNet'
     ...  Should Be Equal As Numbers  ${value}  ${amountNet}
     ...  Amount should be greater than amountNet and differ by no more than 20.0%
+
     Sleep  60s
     Reload Page
 
@@ -1960,28 +1981,24 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     [Arguments]  ${username}  ${tender_uaid}  ${contract_num}  ${dateSigned}
     Reload Page
     Відкрити детальну інформацію про контракт
-    ${signed_day}=  Get Regexp Matches  ${dateSigned}  \\d{2}(?=T)
-    ${signed_day}=  Replace String Using Regexp  ${signed_day[0]}  ^0  ${EMPTY}
-    Wait Visibility And Click Element  xpath=//input[@name='dateSigned']
-    Wait Visibility And Click Element  xpath=//div[@class='datepicker-days']//td[text()='${signed_day}']
+    ${signed}=  Execute Javascript  return new Date("${dateSigned}").getTime();
+    Set Global Variable  ${contract_date_signed}  ${signed}
+    Execute Javascript  var contractHash = angular.element('[data-id=contractHash]').text().trim(); angular.element('[ng-controller=contract_edit_ctrl]').scope().injectDates({id: contractHash,dateSigned: ${contract_date_signed}});
     Wait Until Element Is Enabled  css=button[ng-click="act.saveContract('pending')"]  ${COMMONWAIT}
     Click Button  css=button[ng-click="act.saveContract('pending')"]
     Wait Visibility And Click Element  xpath=//button[@data-id='modal-close']
-    sleep  5s
+    sleep  2s
 
 
 Вказати період дії угоди
     [Arguments]  ${username}  ${tender_uaid}  ${contract_num}  ${startDate}  ${endDate}
     Reload Page
     Відкрити детальну інформацію про контракт
-    ${startDay}=  Get Regexp Matches  ${startDate}  \\d{2}(?=T)
-    ${endDay}=  Get Regexp Matches  ${endDate}  \\d{2}(?=T)
-    ${startDay}=  Replace String Using Regexp  ${startDay[0]}  ^0  ${EMPTY}
-    ${endDay}=  Replace String Using Regexp  ${endDay[0]}  ^0  ${EMPTY}
-    Wait Visibility And Click Element  xpath=//input[@name='startDate']
-    Wait Visibility And Click Element  xpath=//div[@class='datepicker-days']//td[text()='${startDay}']
-    Wait Visibility And Click Element  xpath=//input[@name='endDate']
-    Wait Visibility And Click Element  xpath=//div[@class='datepicker-days']//td[text()='${endDay}']
+    ${start}=  Execute Javascript  return new Date("${startDate}").getTime();
+    Set Global Variable  ${contract_start_date}  ${start}
+    ${end}=  Execute Javascript  return new Date("${endDate}").getTime();
+    Set Global Variable  ${contract_end_date}  ${end}
+    Execute Javascript  var contractHash = angular.element('[data-id=contractHash]').text().trim(); angular.element('[ng-controller=contract_edit_ctrl]').scope().injectDates({id: contractHash,startDate: ${contract_start_date}, endDate: ${contract_end_date}});
     Wait Until Element Is Enabled  css=button[ng-click="act.saveContract('pending')"]  ${COMMONWAIT}
     Click Button  css=button[ng-click="act.saveContract('pending')"]
     Wait Visibility And Click Element  xpath=//button[@data-id='modal-close']
@@ -1998,9 +2015,11 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     Sleep  1s
     Choose File  xpath=//div[@class='form-block__item']/form/div/input  ${file_path}
     Sleep  5s
-    Wait Until Element Is Enabled  css=button[ng-click="act.saveContract('pending')"]  ${COMMONWAIT}
-    Click Button  css=button[ng-click="act.saveContract('pending')"]
-    Wait Visibility And Click Element  xpath=//button[@data-id='modal-close']
+    Execute Javascript  var contractHash = angular.element('[data-id=contractHash]').text().trim(); angular.element('[ng-controller=contract_edit_ctrl]').scope().injectDates({id: contractHash,dateSigned: ${contract_date_signed}});
+    Execute Javascript  var contractHash = angular.element('[data-id=contractHash]').text().trim(); angular.element('[ng-controller=contract_edit_ctrl]').scope().injectDates({id: contractHash,startDate: ${contract_start_date}, endDate: ${contract_end_date}});
+    Wait Element Visibility And Input Text  css=input[data-id='contract.title']  ${tender_uaid}
+    Wait Element Visibility And Input Text  css=#contractNumber  ${tender_uaid}
+    Опублікувати договір  ${tender_uaid}
     sleep  60s
 
 
@@ -2046,6 +2065,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id]
     Run Keyword And Return If  'milestones' in '${field_name}'  Отримати інформацію про умови оплати  ${field_name}
     Run Keyword And Return If  'mainProcurementCategory' in '${field_name}'  Отримати інформацію про вид предмету закупівлі  ${field_name}
     Run Keyword And Return If  '${field_name}' == 'agreements[0].status'  Отримати статус рамкової угоди  ${field_name}
+    Run Keyword And Return If  '${field_name}' == 'agreements[0].agreementID'  Відкрити детальну інформацію про рамкові угоди
     Run Keyword And Return If  '${field_name}' == 'funders[0].name'  Get Element Attribute  xpath=//span[@data-id='founder-name']/parent::li@data-founder-name
     Run Keyword And Return If  '${field_name}' == 'funders[0].contactPoint.url'  Get Element Attribute  xpath=//span[@data-id='founder-contact-point-email']/parent::li@data-founder-contact-point-url
     Run Keyword And Return If  '${field_name}' == 'enquiryPeriod.clarificationsUntil'  Отримати інформацію з ${field_name}  ${field_name}
@@ -3263,13 +3283,20 @@ Login
     Input Text  css=input[data-id='enter-pwd']  ${USERS.users['${username}'].password}
     Wait Visibility And Click Element  css=button[data-id='enter-submit']
     Wait For Ajax
+
+    ${status}=  Run Keyword And Return Status  Wait Until Element Is Visible  css=section.offer-acceptation  10s
+    Run Keyword If  '${status}' == 'True'
+    ...  Run Keywords
+    ...  Wait Visibility And Click Element  css=section.offer-acceptation label>span
+    ...  AND  Wait Visibility And Click Element  css=button.btn-primary
+
     Wait Until Element Is Visible  css=.company-name  timeout=30
 
 
 Wait Visibility And Click Element
     [Arguments]  ${elementLocator}
     Wait Until Element Is Visible  ${elementLocator}  ${COMMONWAIT}
-    Scroll Page To Element  ${elementLocator}
+#    Scroll Page To Element  ${elementLocator}
     Wait Until Element Is Enabled  ${elementLocator}  ${COMMONWAIT}
     Click Element  ${elementLocator}
 
@@ -3597,7 +3624,7 @@ Get Item Number
 
 
 Дочекатися завантаження сторінки підписання ЕЦП
-    ${passed}=  Run Keyword And Return Status  Element Should Be Visible  xpath=//select[@id='CAsServersSelect']
+    ${passed}=  Run Keyword And Return Status  Element Should Be Enabled  id:PKeyPassword
     Run Keyword Unless  '${passed}' == 'PASS'  Reload Page
 
 
@@ -4007,6 +4034,7 @@ Get Item Number
 
 Завантажити документ в ставку
     [Arguments]  ${username}  ${filePath}  ${tenderId}  ${doc_type}=documents  ${doc_type}=${None}
+    ${scenarios_name}=  privatmarket_service.get_scenarios_name
     ${status}=  Run Keyword And Return Status  Wait Until Element Is Visible  ${tender_data_title}  5s
     Run Keyword If  '${status}' == 'False'  privatmarket.Пошук тендера по ідентифікатору  ${username}  ${tenderId}
     Wait For Element With Reload  xpath=//button[@data-id="editBidBtn"]  1  1
@@ -4026,7 +4054,8 @@ Get Item Number
     Wait For Ajax
     Click Button  css=button[data-id='save-bid-btn']
     Sleep  10s
-    Run Keyword Unless  '${mode}' == 'open_esco'  Wait Visibility And Click Element  xpath=//span[contains(text(),'автоматично')]
+    Run Keyword Unless  '${mode}' == 'open_esco' or 'framework_selection' in '${scenarios_name}'
+    ...  Wait Visibility And Click Element  xpath=//span[contains(text(),'автоматично')]
     Wait Visibility And Click Element  xpath=//button[contains(@class,'submit')]
     Run Keyword And Ignore Error  Wait Visibility And Click Element  css=button[data-id='modal-close']
     Sleep  90s
@@ -4035,6 +4064,7 @@ Get Item Number
 
 Змінити документ в ставці
     [Arguments]  ${username}  ${tender_uaid}  ${path}  ${doc_id}  ${doc_type}=documents
+    ${scenarios_name}=  privatmarket_service.get_scenarios_name
     Wait Visibility And Click Element  xpath=//button[@data-id="editBidBtn"]
     Sleep  2s
     Run Keyword Unless  'openUA' in '${mode}'  Wait Visibility And Click Element  css=button[data-id='save-bid-btn']
@@ -4050,7 +4080,8 @@ Get Item Number
     Wait For Ajax
     Click Button  css=button[data-id='save-bid-btn']
     Wait For Ajax
-    Run Keyword Unless  '${mode}' == 'open_esco'  Wait Visibility And Click Element  xpath=//span[contains(text(),'автоматично')]
+    Run Keyword Unless  '${mode}' == 'open_esco' or 'framework_selection' in '${scenarios_name}'
+    ...  Wait Visibility And Click Element  xpath=//span[contains(text(),'автоматично')]
     Wait Visibility And Click Element  xpath=//button[contains(@class,'submit')]
     Run Keyword And Ignore Error  Wait Visibility And Click Element  css=button[data-id='modal-close']
     Sleep  60s
@@ -4058,6 +4089,7 @@ Get Item Number
 
 Змінити документацію в ставці
     [Arguments]  ${username}  ${tender_uaid}  ${doc_data}  ${doc_id}
+    ${scenarios_name}=  privatmarket_service.get_scenarios_name
     ${tender_type}=  Отримати інформацію з procurementMethodType
     Wait Visibility And Click Element  xpath=//button[@data-id="editBidBtn"]
     Wait For Ajax
@@ -4076,7 +4108,8 @@ Get Item Number
     Wait For Ajax
     Wait Visibility And Click Element  css=button[data-id='save-bid-btn']
     Sleep  1s
-    Run Keyword Unless  '${mode}' == 'open_esco'  Wait Visibility And Click Element  xpath=//span[contains(text(),'автоматично')]
+    Run Keyword Unless  '${mode}' == 'open_esco' or 'framework_selection' in '${scenarios_name}'
+    ...  Wait Visibility And Click Element  xpath=//span[contains(text(),'автоматично')]
     Wait Visibility And Click Element  xpath=//button[contains(@class,'submit')]
     Run Keyword And Ignore Error  Wait Visibility And Click Element  css=button[data-id='modal-close']
     Sleep  60s
@@ -4085,6 +4118,7 @@ Get Item Number
 Змінити цінову пропозицію
     [Arguments]  ${username}  ${tender_uaid}  ${field}  ${value}
 
+    ${scenarios_name}=  privatmarket_service.get_scenarios_name
     Run Keyword If  '${field}' == 'status'  Wait Visibility And Click Element  xpath=//button[@data-id="createBidBtn"]
     ...  ELSE  Wait Visibility And Click Element  xpath=//button[@data-id="editBidBtn"]
     Sleep  2s
@@ -4103,7 +4137,8 @@ Get Item Number
     Run Keyword And Ignore Error  Wait Visibility And Click Element  css=button[data-id='modalOkBtn']
     Wait Visibility And Click Element  css=button[data-id='save-bid-btn']
     Wait For Ajax
-    Run Keyword Unless  '${mode}' == 'open_esco'  Wait Visibility And Click Element  xpath=//span[contains(text(),'автоматично')]
+    Run Keyword Unless  '${mode}' == 'open_esco' or 'framework_selection' in '${scenarios_name}'
+    ...  Wait Visibility And Click Element  xpath=//span[contains(text(),'автоматично')]
     Wait Visibility And Click Element  xpath=//button[contains(@class,'submit')]
     Run Keyword And Ignore Error  Wait Visibility And Click Element  css=button[data-id='modal-close']
     Sleep  60s
