@@ -30,6 +30,10 @@ def modify_test_data(initial_data):
     # initial_data['procuringEntity']['name'] = u'ФОП ОГАНІН ОЛЕКСАНДР ПЕТРОВИЧ'
     return initial_data
 
+def convert_date_to_format(date, format):
+    dat = dateutil.parser.parse(date)
+    return dat.strftime(format)
+
 def add_day_to_date(date):
     dat = parser.parse(date)
     new_date = (dat + timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%S%z')
