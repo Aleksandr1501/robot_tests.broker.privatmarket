@@ -272,8 +272,8 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id] | //
     Wait For Tender  ${tenderId}  ${education_type}
     Wait Visibility And Click Element  xpath=//a[@id='${tenderId}']
     Sleep  5s
-#    Run Keyword If  'тендер другого етапу' in '${TEST_NAME}' or 'на другому етапі' in '${TEST_NAME}'
-#    ...  Wait Visibility And Click Element  xpath=//a[@ng-click='act.move2NextStage()']
+    Run Keyword If  'тендер другого етапу' in '${TEST_NAME}' or 'на другому етапі' in '${TEST_NAME}'
+    ...  Wait Visibility And Click Element  xpath=//a[@ng-click='act.move2NextStage()']
     Wait Until Element Is Visible  ${tender_data_title}  ${COMMONWAIT}
     Log To Console  ${tenderId}
 
@@ -2831,6 +2831,7 @@ Try To Search Complaint
 Відкрити детальну інформацію про рамкові угоди
     ${class}=  Get Element Attribute  xpath=//a[@id='agreementBtn']@class
     Run Keyword Unless  'checked' in '${class}'  Click Element  xpath=//a[@id='agreementBtn']
+    sleep  10s
 
 
 Отримати статус заявки
@@ -4470,8 +4471,8 @@ Get Item Number
     Log  ${tender_uaid}
     privatmarket.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
 
-    Run Keyword If  'тендер другого етапу' in '${TEST_NAME}' or 'на другому етапі' in '${TEST_NAME}'
-    ...  Wait Visibility And Click Element  xpath=//a[@ng-click='act.move2NextStage()']
+#    Run Keyword If  'тендер другого етапу' in '${TEST_NAME}' or 'на другому етапі' in '${TEST_NAME}'
+#    ...  Wait Visibility And Click Element  xpath=//a[@ng-click='act.move2NextStage()']
 
     Run Keyword And Ignore Error  Wait Visibility And Click Element  css=button[data-id='modal-close']
     Wait Visibility And Click Element  ${locator_tenderadd.btnsave}
@@ -4651,3 +4652,128 @@ Get Item Number
     Wait Visibility And Click Element  css=div.agreement div#noEcp
     Завантажити ЕЦП
     sleep  150s
+
+
+Отримати доступ до угоди
+    [Arguments]  ${username}  ${tender_uaid}
+    Reload Page
+    Wait Visibility And Click Element  css=a#agreementBtn
+    Element Should Be Visible  xpath=//button/*[contains(text(),'Виконати')]
+
+
+Завантажити документ в рамкову угоду
+    [Arguments]  ${username}  ${file_path}  ${agreementID}
+    Fail  Не реализовано
+
+
+Внести зміну в угоду
+    [Arguments]  ${username}  ${agreement_uaid}  ${change_data}
+    Reload Page
+    Wait Visibility And Click Element  css=a#agreementBtn
+    ${rationaleType}=  Set Variable  ${change_data.data.rationaleType}
+
+    Run Keyword If  '${rationaleType}' == 'taxRate' or '${rationaleType}' == 'itemPriceVariation' or '${rationaleType}' == 'thirdParty'
+    ...  Run Keywords
+    ...  Wait Visibility And Click Element  xpath=//div[contains(@class,'agreements')]//span[text()='Опис']
+    ...  AND  Wait Visibility And Click Element  xpath=//button[contains(@ng-click,'unitPriseEdit')]
+    ...  AND  Wait Visibility And Click Element  xpath=//p[contains(text(),'Предмет закупівлі')]/../preceding-sibling::label
+    ...  AND  Wait Visibility And Click Element  xpath=//button[contains(@ng-click,'confirmPriceChanges')]
+    ...  AND  Wait Visibility And Click Element  xpath=//select[@data-id='rationale-type-select']/option[@value='string:${rationaleType}']
+    ...  AND  Wait Element Visibility And Input Text  xpath=//input[@name='rationale']  ${change_data.data.rationale}
+    ...  AND  Run Keyword If  'taxRate' in '${TEST_NAME}'  Wait Visibility And Click Element  xpath=//label[@for='priceValue0']
+    ...  AND  Run Keyword If  'taxRate' in '${TEST_NAME}'  Wait Element Visibility And Input Text  xpath=//input[@data-id='modification-addend-input']  1
+    ...  AND  Run Keyword If  'itemPriceVariation' in '${TEST_NAME}' or 'thirdParty' in '${TEST_NAME}'  Clear Element Text  xpath=//input[@data-id='modification-factor-input']
+    ...  AND  Run Keyword If  'itemPriceVariation' in '${TEST_NAME}' or 'thirdParty' in '${TEST_NAME}'  Wait Element Visibility And Input Text  xpath=//input[@data-id='modification-factor-input']  1.01
+    ...  AND  Wait Visibility And Click Element  xpath=//button[@data-id='review-changes']
+
+    Run Keyword If  '${rationaleType}' == 'partyWithdrawal'
+    ...  Run Keywords
+    ...  Wait Visibility And Click Element  xpath=//div[contains(@class,'agreements')]//span[text()='Сторони рамкової угоди']
+    ...  AND  Wait Visibility And Click Element  xpath=//button[contains(@ng-click,'partyWithdrawalEdit')]
+    ...  AND  Wait Visibility And Click Element  xpath=(//*[@data-id='party-withdrawal']//label[contains(@class,'switch')])[1]
+    ...  AND  Wait Visibility And Click Element  xpath=//button[contains(@ng-click,'confirmPartyWithdrawalChanges')]
+    ...  AND  Wait Visibility And Click Element  xpath=//button[@data-id='modalOkBtn']
+    ...  AND  Wait Element Visibility And Input Text  xpath=//input[@name='rationale']  ${change_data.data.rationale}
+    ...  AND  Wait Visibility And Click Element  xpath=//button[@data-id='save-agreement-change-draft']
+    ...  AND  Wait Visibility And Click Element  xpath=//button[@data-id='modal-close']
+    sleep  30s
+
+
+Оновити властивості угоди
+    [Arguments]  ${username}  ${agreement_uaid}  ${change_data}
+    Reload Page
+    Wait Visibility And Click Element  css=a#agreementBtn
+    Wait Visibility And Click Element  xpath=//a/span[text()='Зміни до рамкової угоди']
+    ${field_name}=  Run Keyword  privatmarket_service.get_change_field_name  ${change_data.data.modifications[0]}
+    ${field_value}=  Run Keyword  privatmarket_service.get_change_field_value  ${change_data.data.modifications[0]}
+    ${field_value}=  Convert To String  ${field_value}
+
+    Run Keyword If  'itemPriceVariation' in '${TEST_NAME}' or 'thirdParty' in '${TEST_NAME}'  Clear Element Text  xpath=//input[@data-id='modification-factor-input']
+
+    Run Keyword If  '${field_name}' == 'addend'
+    ...  Wait Element Visibility And Input Text  xpath=//input[@data-id='modification-addend-input']  ${field_value}
+    Run Keyword If  '${field_name}' == 'factor'
+    ...  Wait Element Visibility And Input Text  xpath=//input[@data-id='modification-factor-input']  ${field_value}
+
+    Wait Visibility And Click Element  xpath=//button[@data-id='review-changes']
+    sleep  30s
+
+
+Завантажити документ для зміни у рамковій угоді
+    [Arguments]  ${username}  ${file_path}  ${agreement_uaid}  ${item_id}
+    Reload Page
+    Wait Visibility And Click Element  css=a#agreementBtn
+    Wait Visibility And Click Element  xpath=//a/span[text()='Зміни до рамкової угоди']
+    Wait Visibility And Click Element  xpath=//span[contains(@ng-click,'change.addDocs')]
+
+    Run Keyword And Ignore Error  Wait Visibility And Click Element  xpath=//select[@data-id='filetype']/option[6]
+    Run Keyword And Ignore Error  Wait Visibility And Click Element  xpath=//select[@data-id='filelang']/option[2]
+    Run Keyword And Ignore Error  Execute Javascript  document.querySelector("input[data-id='input-file']").style = '';
+    Sleep  1s
+    Run Keyword And Ignore Error  Choose File  css=input[data-id='input-file']  ${file_path}
+    Sleep  30s
+    Wait Visibility And Click Element  xpath=//button[@data-id='review-changes']
+    sleep  30s
+
+
+Застосувати зміну для угоди
+    [Arguments]  ${username}  ${agreement_uaid}  ${dateSigned}  ${status}
+    Reload Page
+    Wait Visibility And Click Element  css=a#agreementBtn
+    Wait Visibility And Click Element  xpath=//a/span[text()='Зміни до рамкової угоди']
+
+    ${signed}=  privatmarket_service.convert_date_to_format  ${dateSigned}  %d-%m-%Y %H:%M
+    Wait Element Visibility And Input Text  xpath=//input[contains(@data-id,'dateSigned')]  ${signed}
+
+    Run Keyword If  '${status}' == 'cancelled'
+    ...  Run Keywords
+    ...  Wait Visibility And Click Element  xpath=//button[@data-id='cancel-agreement-changes']
+    ...  AND  Wait Visibility And Click Element  xpath=//*[@data-id='modalOkBtn']
+
+    Run Keyword If  '${status}' == 'active'
+    ...  Wait Visibility And Click Element  xpath=//button[@data-id='activete-agreement-changes']
+    sleep  30s
+
+
+#Дочекатись можливості зареєструвати угоди
+#  [Arguments]  ${username}
+#  ${username}=  Отримати користувача з доступом до поля за пріорітетом  contractPeriod  ${tender_owner}  ${viewer}
+#  Дочекатись дати  ${USERS.users['${username}'].tender_data.data.contractPeriod.clarificationsUntil}
+#  Оновити LAST_MODIFICATION_DATE
+#  Дочекатись синхронізації з майданчиком  ${username}
+#
+#
+#
+#Розрахувати ціну для ${contract_number} контракту
+#  ${username}=  Отримати користувача з доступом до поля за пріорітетом  agreements  ${tender_owner}  ${viewer}
+#  ${contract_data}=  Create Dictionary  data=${USERS.users['${username}'].tender_data.data.agreements[0].contracts[${contract_number}]}
+#  ${quantity}=  Set Variable  ${0}
+#  :FOR  ${index}  IN RANGE  ${NUMBER_OF_ITEMS}
+#  \  ${quantity}=  Evaluate  ${quantity}+${USERS.users['${username}'].tender_data.data['items'][${index}]['quantity']}
+#  ${value}=  Evaluate  ${USERS.users['${username}'].tender_data.data.awards[${contract_number}].value.amount}/${quantity}
+#  ${value}=  Convert To Integer  ${value}
+#  :FOR  ${index}  IN RANGE  ${NUMBER_OF_ITEMS}
+#  \  Set To Dictionary  ${contract_data.data.unitPrices[${index}].value}  amount=${value}
+#  ${contract_data}=  munch_dict  arg=${contract_data}
+#  Log  ${contract_data}
+#  [Return]  ${contract_data}

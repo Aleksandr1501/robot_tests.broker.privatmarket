@@ -443,3 +443,11 @@ def get_budgetBreakdown (type):
 
 def change_fake_date():
     return (datetime.datetime.now(timezone('Europe/Kiev')) + timedelta(days=3)).strftime('%Y-%m-%dT%H:%M:%S.%f%z')
+
+
+def get_change_field_name(change_dict):
+    return list(change_dict.keys())[1]
+
+
+def get_change_field_value(change_dict):
+    return list(change_dict.values())[1]
