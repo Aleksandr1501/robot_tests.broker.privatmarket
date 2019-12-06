@@ -4777,3 +4777,16 @@ Get Item Number
 #  ${contract_data}=  munch_dict  arg=${contract_data}
 #  Log  ${contract_data}
 #  [Return]  ${contract_data}
+
+
+
+#Підготувати дані для оновлення властивості угоди
+#  [Arguments]  ${username}  ${field_name}  ${field_value}
+#  ${username}=  Отримати користувача з доступом до поля за пріорітетом  items  ${tender_owner}  ${viewer}
+#  ${modification_data}=  test_modification_data
+#  ...      ${USERS.users['${username}'].agreement_data.data['items'][0]['id']}
+#  ...      ${field_name}
+#  ...      ${field_value}
+#  Set To Dictionary  ${USERS.users['${tender_owner}']}  modification_data=${modification_data}
+#  Log  ${modification_data}
+#  [Return]  ${modification_data}
