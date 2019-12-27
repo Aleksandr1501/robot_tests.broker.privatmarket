@@ -272,7 +272,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id] | //
     Wait For Tender  ${tenderId}  ${education_type}
     Wait Visibility And Click Element  xpath=//a[@id='${tenderId}']
     Sleep  5s
-    Run Keyword If  'тендер другого етапу' in '${TEST_NAME}' or 'на другому етапі' in '${TEST_NAME}'
+    Run Keyword If  '${MODE}' != 'framework_selection' and 'тендер другого етапу' in '${TEST_NAME}' or 'на другому етапі' in '${TEST_NAME}'
     ...  Wait Visibility And Click Element  xpath=//a[@ng-click='act.move2NextStage()']
     Wait Until Element Is Visible  ${tender_data_title}  ${COMMONWAIT}
     Log To Console  ${tenderId}
@@ -713,7 +713,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id] | //
 
 
 Створити тендер
-    [Arguments]  ${username}  ${tender_data}  ${tender_id}  ${tender_owner_access_token}
+    [Arguments]  ${username}  ${tender_data}  ${tender_uaid}
     Set Global Variable  ${TENDER_DATA}  ${tender_data}
     ${presence}=  Run Keyword And Return Status  List Should Contain Value  ${tender_data.data}  lots
     @{lots}=  Run Keyword If  ${presence}  Get From Dictionary  ${tender_data.data}  lots
@@ -755,7 +755,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id] | //
     ...  ELSE IF  ${type} == '' and 'after_resolved_award_complaint' in '${scenarios_name}'  Wait Visibility And Click Element  xpath=//select[@data-id='accelerator-select']/option[contains(., '144')]
     ...  ELSE IF  ${type} == ''  Wait Visibility And Click Element  xpath=//select[@data-id='accelerator-select']/option[contains(., '1440')]
     ...  ELSE IF  ${type} == 'reporting'  no operation
-    ...  ELSE IF  ${type} == 'closeFrameworkAgreementSelectionUA'  Wait Visibility And Click Element  xpath=//select[@data-id='accelerator-select']/option[contains(., '720')]
+    ...  ELSE IF  ${type} == 'closeFrameworkAgreementSelectionUA'  Wait Visibility And Click Element  xpath=//select[@data-id='accelerator-select']/option[contains(., '360')]
     ...  ELSE  Wait Visibility And Click Element  xpath=//select[@data-id='accelerator-select']/option[contains(., '1440')]
 
 #step 0
@@ -1702,7 +1702,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id] | //
     Sleep  1s
     Wait Until Element Is Visible  xpath=//div[contains(text(),'Ваше рішення поставлено в чергу на відправку в Prozorro')]  ${COMMONWAIT}
 #    Підписати ЕЦП  ${index}
-    Sleep  180s
+    Sleep  60s
 
 
 Відхилити кваліфікацію
@@ -2098,7 +2098,7 @@ ${tender_data_agreements[0].agreementID}  xpath=//div[@parent-agreement-id] | //
     [Arguments]  ${user_name}  ${base_tender_uaid}  ${field_name}
     ${scenarios_name}=  privatmarket_service.get_scenarios_name
     Run Keyword And Return If  '${field_name}' == 'value.amount'  Convert Amount To Number  ${field_name}
-    Run Keyword And Return If  'stage2_pending_status_view' in @{TEST_TAGS}  Дочекатися статусу
+#    Run Keyword And Return If  'stage2_pending_status_view' in @{TEST_TAGS}  Дочекатися статусу
     Run Keyword And Return If  '${field_name}' == 'value.currency'  Отримати інформацію з ${field_name}  ${field_name}
     Run Keyword And Return If  '${field_name}' == 'value.valueAddedTaxIncluded'  Отримати інформацію з ${field_name}  ${field_name}
     Run Keyword And Return If  'minimalStep.amount' in '${field_name}'  Convert Amount To Number  ${field_name}
@@ -4361,7 +4361,12 @@ Get Item Number
     [Arguments]  ${username}  ${tender_uaid}
     ${status}=  Run Keyword And Return Status  Wait Until Element Is Visible  ${tender_data_title}  5s
     Run Keyword If  '${status}' == 'False'  privatmarket.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
-    Wait Until Keyword Succeeds  10min  10s  Дочекатися зміни статусу тендера на  active.stage2.waiting
+    Wait Visibility And Click Element  xpath=//button[@data-id='start-stage-2']
+    Wait Visibility And Click Element  xpath=//button[@data-id='modal-close']
+    sleep  10s
+    Reload Page
+    ${current_status}=  Get Element Attribute  ${tender_data_status}@data-tender-status
+    [Return]  ${current_status}
 
 
 Дочекатися зміни статусу тендера на
@@ -4387,10 +4392,10 @@ Get Item Number
 Отримати тендер другого етапу та зберегти його
     [Arguments]  ${username}  ${tender_uaid}
     Log  ${tender_uaid}
-    privatmarket.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+#    privatmarket.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
 
-#    Run Keyword If  'тендер другого етапу' in '${TEST_NAME}' or 'на другому етапі' in '${TEST_NAME}'
-#    ...  Wait Visibility And Click Element  xpath=//a[@ng-click='act.move2NextStage()']
+    Run Keyword If  'тендер другого етапу' in '${TEST_NAME}' or 'на другому етапі' in '${TEST_NAME}'
+    ...  Wait Visibility And Click Element  xpath=//a[@ng-click='act.move2NextStage()']
 
     Run Keyword And Ignore Error  Wait Visibility And Click Element  css=button[data-id='modal-close']
     Wait Visibility And Click Element  ${locator_tenderadd.btnsave}
@@ -4708,3 +4713,6 @@ Get Item Number
 #  Set To Dictionary  ${USERS.users['${tender_owner}']}  modification_data=${modification_data}
 #  Log  ${modification_data}
 #  [Return]  ${modification_data}
+
+
+#https://zakupivli24.pb.ua/prz-stage/tender/UA-2019-12-26-000030-c#/info
